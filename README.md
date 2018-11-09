@@ -63,8 +63,13 @@ Start the demo tmux session as follows:
   demo/tmux.sh
   ```
 
-You can start fetching data right away:
+NOTE: When encountering `Protocol ‘inet_tcp’: register/listen error: econnrefused` please run the following command in your console first.
 
+  ```shell
+  epmd -daemon
+  ```
+
+You can start fetching data right away:
 
   ```elixir
   iex(1)> Clustorage.get :hello, fn() -> :world end
