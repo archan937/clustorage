@@ -74,7 +74,7 @@ defmodule Clustorage.Node do
   defp nodename(), do: nodename(nil)
   defp nodename(nil), do: nodename(name() || hostname())
   defp nodename(name) do
-    if String.contains?(name, "@") do
+    if name |> to_string() |> String.contains?("@") do
       name
     else
       "#{name}@#{ip()}"
