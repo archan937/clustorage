@@ -13,19 +13,25 @@ defmodule Clustorage.Compiler do
 
   def init(state), do: {:ok, state}
 
-  def compiled?(key) do
+  def compiled?(key, :get) do
     key
     |> to_module()
-    |> function_exported?(:value, 0)
+    |> function_exported?(:get, 0)
   end
 
-  def compile(key, value) do
+  def compiled?(key, :call) do
+    key
+    |> to_module()
+    |> function_exported?(:call, 1)
+  end
+
+  def compile(key, arg, type) do
     module = to_module(key)
     purge(module)
 
     [{^module, binary}] =
       module
-      |> to_quoted(value)
+      |> to_quoted(arg, type)
       |> Code.compile_quoted()
 
     Clustorage.Node.hot_load(key, module, binary)
@@ -40,7 +46,11 @@ defmodule Clustorage.Compiler do
   end
 
   def get(key) do
-    to_module(key).value()
+    to_module(key).get()
+  end
+
+  def call(key, args) do
+    to_module(key).call(args)
   end
 
   defp purge(module) do
@@ -56,11 +66,21 @@ defmodule Clustorage.Compiler do
     :"Elixir.Clustorage:#{key}"
   end
 
-  defp to_quoted(module, value) do
+  defp to_quoted(module, value, :get) do
     quote do
       defmodule unquote(module) do
-        def value do
+        def get do
           unquote(Macro.escape(value))
+        end
+      end
+    end
+  end
+
+  defp to_quoted(module, ast, :call) do
+    quote do
+      defmodule unquote(module) do
+        def call(args) do
+          apply(unquote(ast), args)
         end
       end
     end

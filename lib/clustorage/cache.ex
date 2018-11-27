@@ -11,12 +11,12 @@ defmodule Clustorage.Cache do
     GenServer.start_link(__MODULE__, %{table: nil}, [name: @name])
   end
 
-  def get(key, fun, compile \\ false) do
+  def get(key, fun, type, compile \\ false) do
     case GenServer.call(@name, {:get, key}) do
       :nil ->
         value = fun.()
         GenServer.cast(@name, {:put, key, value})
-        if compile, do: Clustorage.Node.compile(key, value)
+        if compile, do: Clustorage.Node.compile(key, value, type)
         value
       value ->
         value

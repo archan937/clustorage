@@ -11,8 +11,8 @@ defmodule Clustorage.Node do
     GenServer.start_link(__MODULE__, %{nodes: MapSet.new()}, [name: @name])
   end
 
-  def compile(key, value) do
-    GenServer.cast(@name, {:compile, key, value})
+  def compile(key, arg, type) do
+    GenServer.cast(@name, {:compile, key, arg, type})
   end
 
   def hot_load(key, module, binary) do
@@ -49,8 +49,8 @@ defmodule Clustorage.Node do
     {:noreply, state}
   end
 
-  def handle_cast({:compile, key, value}, state) do
-    Node.spawn(loader(), Clustorage.Compiler, :compile, [key, value])
+  def handle_cast({:compile, key, arg, type}, state) do
+    Node.spawn(loader(), Clustorage.Compiler, :compile, [key, arg, type])
     {:noreply, state}
   end
 
