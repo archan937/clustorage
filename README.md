@@ -1,6 +1,6 @@
 # Clustorage
 
-Elixir cluster to store and distribute large lookup data by code compilation and hot loading done by a designated "loader node"
+Elixir cluster to store and distribute data and functions by code compilation and hot loading done by a designated "loader node"
 
 ## Installation
 
@@ -42,11 +42,28 @@ To install Clustorage, please do the following:
 
 ## Usage
 
+### Simple key / value data
+
 Using Clustorage is easy, just get a value by passing a key and a function which will be invoked during the first attempt of acquiring the value.
 
   ```elixir
   Clustorage.get(:hello, fn -> :world end)
   :world
+  ```
+
+### Distributing functions
+
+It is also possible to compile and hot load functions. This is also pretty straightforward:
+
+  ```elixir
+  Clustorage.call(:sum, [1, 4], fn() ->
+    quote do
+      fn(a, b) ->
+        a + b
+      end
+    end
+  end)
+  5
   ```
 
 (additional documentation)
@@ -72,8 +89,16 @@ NOTE: When encountering `Protocol ‘inet_tcp’: register/listen error: econnre
 You can start fetching data right away:
 
   ```elixir
-  iex(1)> Clustorage.get :hello, fn() -> :world end
+  iex(1)> Clustorage.get(:hello, fn() -> :world end)
   :world
+  iex(2)> Clustorage.call(:sum, [1, 4], fn() ->
+  ...(app3@192.168.0.20)1>   quote do
+  ...(app3@192.168.0.20)1>     fn(a, b) ->
+  ...(app3@192.168.0.20)1>       a + b
+  ...(app3@192.168.0.20)1>     end
+  ...(app3@192.168.0.20)1>   end
+  ...(app3@192.168.0.20)1> end)
+  5
   ```
 
 Kill the tmux session as follows:
