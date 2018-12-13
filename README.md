@@ -11,7 +11,7 @@ To install Clustorage, please do the following:
       ```elixir
       def deps do
         [
-          {:clustorage, "~> 0.1.0"}
+          {:clustorage, "~> 0.1.0", git: "https://github.com/archan937/clustorage.git"}
         ]
       end
       ```
