@@ -51,6 +51,13 @@ Using Clustorage is easy, just get a value by passing a key and a function which
   :world
   ```
 
+After having executed that line, you can invoke the following in another cluster node to direct aqcuire the compiled data:
+
+  ```elixir
+  :"Elixir.Clustorage:hello".get()
+  :world
+  ```
+
 ### Distributing functions
 
 It is also possible to compile and hot load functions. This is also pretty straightforward:
@@ -66,7 +73,14 @@ It is also possible to compile and hot load functions. This is also pretty strai
   5
   ```
 
-(additional documentation)
+After having executed that line, you can invoke the following in another cluster node to directly call the compiled function:
+
+  ```elixir
+  :"Elixir.Clustorage:sum".call([31, 82])
+  113
+  :"Elixir.Clustorage:sum".call([20, 17])
+  37
+  ```
 
 ## Run the Clustorage demo
 
