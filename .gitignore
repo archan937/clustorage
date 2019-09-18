@@ -1,6 +1,5 @@
 /_build
 /bench/snapshots
-/doc
 /cover
 /deps
 erl_crash.dump
